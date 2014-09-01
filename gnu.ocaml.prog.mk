@@ -38,7 +38,11 @@ all: ${PROG}
 
 SRC+=		$(CSRC)
 
--include Makefile.dep
+ifndef DEPFILE
+DEPFILE=	.Makefile.dep
+endif
+
+-include $(DEPFILE)
 
 ifdef CSRC
 ifndef OCAMLNATIVE
@@ -62,8 +66,8 @@ $(PROG): $(OBJ)
 clean:
 	$(RM) $(CLEAN) $(OBJ) $(PROG)
 dep:
-	printf "SRC+=\t%s\n" `ocamldep -sort *.ml` > Makefile.dep
-	printf "\n%s\n" "`ocamldep *.mli *.ml`" >> Makefile.dep
+	printf "SRC+=\t%s\n" `ocamldep -sort *.ml` > $(DEPFILE)
+	printf "\n%s\n" "`ocamldep *.mli *.ml`" >> $(DEPFILE)
 
 .DEFAULT_GOAL:=	$(PROG)
 .SUFFIXES:
