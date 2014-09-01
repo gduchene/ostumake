@@ -16,6 +16,16 @@
 
 include $(dir $(lastword $(MAKEFILE_LIST)))gnu.ocaml.rules.mk
 
+DEPFILE?=	.Makefile.dep
+PROG?=		a.out
+SRC+=		$(CSRC)
+
+ifdef CSRC
+ifndef OCAMLNATIVE
+OCAMLFLAGS+=	-custom
+endif
+endif
+
 ifndef OCAMLC
 ifdef OCAMLNATIVE
 OCAMLC=		ocamlfind ocamlopt
@@ -30,25 +40,7 @@ endif
 
 OCAMLFLAGS+=	$(DEBUG)
 
-ifndef PROG
-PROG=		a.out
-endif
-
-all: ${PROG}
-
-SRC+=		$(CSRC)
-
-ifndef DEPFILE
-DEPFILE=	.Makefile.dep
-endif
-
 -include $(DEPFILE)
-
-ifdef CSRC
-ifndef OCAMLNATIVE
-OCAMLFLAGS+=	-custom
-endif
-endif
 
 OBJ+=		$(patsubst %.c, %.o, $(filter %.c, $(SRC)))
 
@@ -61,6 +53,7 @@ OBJ+=		$(patsubst %.ml, %.cmo, $(filter %.ml, $(SRC)))
 CLEAN+=		$(patsubst %.cmo, %.cmi, $(OBJ))
 endif
 
+all: ${PROG}
 $(PROG): $(OBJ)
 	$(OCAMLC) $(OCAMLFLAGS) -o $@ $^
 clean:
