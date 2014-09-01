@@ -68,6 +68,8 @@ clean:
 dep:
 	printf "SRC+=\t%s\n" `ocamldep -sort *.ml` > $(DEPFILE)
 	printf "\n%s\n" "`ocamldep *.mli *.ml`" >> $(DEPFILE)
+dist-clean: clean
+	$(RM) $(DEPFILE)
 
 .DEFAULT_GOAL:=	$(PROG)
 .SUFFIXES:
