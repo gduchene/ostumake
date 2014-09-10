@@ -17,6 +17,8 @@
 include $(dir $(lastword $(MAKEFILE_LIST)))gnu.ocaml.rules.mk
 
 DEPFILE?=	.Makefile.dep
+MENHIR?=	menhir
+OCAMLLEX?=	ocamllex
 PROG?=		a.out
 SRC+=		$(CSRC)
 
@@ -53,14 +55,18 @@ OBJ+=		$(patsubst %.ml, %.cmo, $(filter %.ml, $(SRC)))
 CLEAN+=		$(patsubst %.cmo, %.cmi, $(OBJ))
 endif
 
-$(DEPFILE): $(wildcard *.ml)
+INTER=		$(patsubst %.mly, %.ml, $(wildcard *.mly))
+INTER+=		$(patsubst %.mll, %.ml, $(wildcard *.mll))
+CLEAN+=		$(patsubst %.ml, %.mli, $(INTER))
+
+$(DEPFILE): $(wildcard *.ml) $(INTER)
 	printf "SRC+=\t%s\n" `ocamldep -sort *.ml` > $(DEPFILE)
 	printf "\n%s\n" "`ocamldep *.mli *.ml`" >> $(DEPFILE)
 $(PROG): $(DEPFILE) $(OBJ)
 	$(OCAMLC) $(OCAMLFLAGS) -o $@ $(filter-out $(DEPFILE), $^)
 all: $(PROG)
 clean:
-	$(RM) $(CLEAN) $(OBJ) $(PROG)
+	$(RM) $(CLEAN) $(OBJ) $(PROG) $(INTER)
 dist-clean: clean
 	$(RM) $(DEPFILE)
 

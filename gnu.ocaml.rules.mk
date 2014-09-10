@@ -22,3 +22,7 @@
 	$(OCAMLC) $(OCAMLFLAGS) -c $<
 %.cmx: %.ml
 	$(OCAMLC) $(OCAMLFLAGS) -c $<
+%.ml: %.mll
+	$(OCAMLLEX) $(OCAMLLEXFLAGS) $<
+%.ml: %.mly
+	$(MENHIR) $(MENHIRFLAGS) $<
