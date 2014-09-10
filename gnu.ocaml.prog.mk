@@ -53,14 +53,14 @@ OBJ+=		$(patsubst %.ml, %.cmo, $(filter %.ml, $(SRC)))
 CLEAN+=		$(patsubst %.cmo, %.cmi, $(OBJ))
 endif
 
-all: ${PROG}
-$(PROG): $(OBJ)
-	$(OCAMLC) $(OCAMLFLAGS) -o $@ $^
-clean:
-	$(RM) $(CLEAN) $(OBJ) $(PROG)
-dep:
+$(DEPFILE): $(wildcard *.ml)
 	printf "SRC+=\t%s\n" `ocamldep -sort *.ml` > $(DEPFILE)
 	printf "\n%s\n" "`ocamldep *.mli *.ml`" >> $(DEPFILE)
+$(PROG): $(DEPFILE) $(OBJ)
+	$(OCAMLC) $(OCAMLFLAGS) -o $@ $(filter-out $(DEPFILE), $^)
+all: $(PROG)
+clean:
+	$(RM) $(CLEAN) $(OBJ) $(PROG)
 dist-clean: clean
 	$(RM) $(DEPFILE)
 
