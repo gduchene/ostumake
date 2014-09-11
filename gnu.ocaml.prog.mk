@@ -14,61 +14,13 @@
 # TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 # PERFORMANCE OF THIS SOFTWARE.
 
-include $(dir $(lastword $(MAKEFILE_LIST)))gnu.ocaml.rules.mk
+include $(dir $(lastword $(MAKEFILE_LIST)))gnu.ocaml.obj.mk
 
-DEPFILE?=	.Makefile.dep
-MENHIR?=	menhir
-OCAMLLEX?=	ocamllex
 PROG?=		a.out
-SRC+=		$(CSRC)
-
-ifdef CSRC
-ifndef OCAMLNATIVE
-OCAMLFLAGS+=	-custom
-endif
-endif
-
-ifndef OCAMLC
-ifdef OCAMLNATIVE
-OCAMLC=		ocamlfind ocamlopt
-else
-OCAMLC=		ocamlfind ocamlc
-endif
-endif
-
-ifdef PKG
-OCAMLFLAGS+=	-linkpkg -package "$(PKG)"
-endif
-
-OCAMLFLAGS+=	$(DEBUG)
-
--include $(DEPFILE)
-
-OBJ+=		$(patsubst %.c, %.o, $(filter %.c, $(SRC)))
-
-ifdef OCAMLNATIVE
-OBJ+=		$(patsubst %.ml, %.cmx, $(filter %.ml, $(SRC)))
-CLEAN+=		$(patsubst %.cmx, %.o, $(OBJ))
-CLEAN+=		$(patsubst %.cmx, %.cmi, $(OBJ))
-else
-OBJ+=		$(patsubst %.ml, %.cmo, $(filter %.ml, $(SRC)))
-CLEAN+=		$(patsubst %.cmo, %.cmi, $(OBJ))
-endif
-
-INTER=		$(patsubst %.mly, %.ml, $(wildcard *.mly))
-INTER+=		$(patsubst %.mll, %.ml, $(wildcard *.mll))
-CLEAN+=		$(patsubst %.ml, %.mli, $(INTER))
-
-$(DEPFILE): $(wildcard *.ml) $(INTER)
-	printf "SRC+=\t%s\n" `ocamldep -sort *.ml` > $(DEPFILE)
-	printf "\n%s\n" "`ocamldep *.mli *.ml`" >> $(DEPFILE)
-$(PROG): $(DEPFILE) $(OBJ)
-	$(OCAMLC) $(OCAMLFLAGS) -o $@ $(filter-out $(DEPFILE), $^)
-all: $(PROG)
-clean:
-	$(RM) $(CLEAN) $(OBJ) $(PROG) $(INTER)
-dist-clean: clean
-	$(RM) $(DEPFILE)
 
 .DEFAULT_GOAL:=	$(PROG)
-.SUFFIXES:
+
+$(PROG):	$(_OBJ)
+	$(OCAMLC) $(OCAMLFLAGS) -o $@ $^
+
+all:		$(PROG)
