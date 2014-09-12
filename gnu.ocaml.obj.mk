@@ -67,11 +67,11 @@ _OBJ=		$(patsubst %.c, %.o, $(filter %.c, $(_ORD)))
 
 ifdef OCAMLNATIVE
 _OBJ+=		$(patsubst %.ml, %.cmx, $(filter %.ml, $(_ORD)))
-_CLN+=		$(patsubst %.cmx, %.o, $(_OBJ))
-_CLN+=		$(patsubst %.cmx, %.cmi, $(_OBJ))
+_CLN+=		$(patsubst %.cmx, %.o, $(filter %.cmx, $(_OBJ)))
+_CLN+=		$(patsubst %.cmx, %.cmi, $(filter %.cmx, $(_OBJ)))
 else
 _OBJ+=		$(patsubst %.ml, %.cmo, $(filter %.ml, $(_ORD)))
-_CLN+=		$(patsubst %.cmo, %.cmi, $(_OBJ))
+_CLN+=		$(patsubst %.cmo, %.cmi, $(filter %.cmo, $(_OBJ)))
 endif
 
 _INT=		$(patsubst %.mly, %.ml, $(filter %.mly, $(_SRC)))
