@@ -15,7 +15,7 @@
 # PERFORMANCE OF THIS SOFTWARE.
 
 %.o: %.c
-	$(OCAMLC) -c -ccopt "$(CFLAGS)" $<
+	$(OCAMLC) -c -ccopt "$(CFLAGS) -o $@" $<
 %.cmi: %.mli
 	$(OCAMLC) $(OCAMLFLAGS) $<
 %.cmo: %.ml
