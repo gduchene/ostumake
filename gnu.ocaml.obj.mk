@@ -26,13 +26,13 @@ ifdef EXCL
 _EXL=		$(foreach e, $(EXCL), -not -regex '.*$e.*')
 endif
 
-DEPFILE?=	.Makefile.dep
 MENHIR?=	menhir
 OCAMLDEP?=	ocamldep
 OCAMLLEX?=	ocamllex
 
 .DEFAULT_GOAL:=	obj
 
+_DEP=		$(foreach e,$(_SRC),$(dir $e)$(patsubst %.ml,.%.d,$(notdir $e)))
 _FND=		find
 _PAT=		'.*ml[ily]*.*'
 _SRC=		$(shell $(_FND) $(_FNDFLAGS))
@@ -78,30 +78,27 @@ _INT=		$(patsubst %.mly, %.ml, $(filter %.mly, $(_SRC)))
 _INT+=		$(patsubst %.mll, %.ml, $(filter %.mll, $(_SRC)))
 _CLN+=		$(patsubst %.ml, %.mli, $(_INT))
 
--include $(DEPFILE)
+-include $(_DEP)
 
-$(_OBJ):	$(DEPFILE)
-
-$(DEPFILE):	$(_SRC) $(_INT)
-	$(OCAMLDEP) $(_INC) $(_SRC) > $(DEPFILE)
+.%.d:		%.ml
+	$(OCAMLDEP) $(_INC) $< > $@
 
 all:		$(_OBJ)
 
 clean:
 	$(RM) $(_CLN) $(_INT) $(_OBJ) $(PROG)
 
-dep:
-	$(OCAMLDEP) $(_INC) $(_SRC) > $(DEPFILE)
+dep:		$(_DEP)
 
 dist-clean:	clean
-	$(RM) $(DEPFILE)
+	$(RM) $(_DEP)
 
 obj:		$(_OBJ)
 
 .PHONY:		dep
 
 ifndef OSTUMAKE_DEBUG
-.SILENT:	$(DEPFILE) dep
+.SILENT:	$(_DEP)
 endif
 
 .SUFFIXES:
