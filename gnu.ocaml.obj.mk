@@ -34,7 +34,7 @@ OCAMLLEX?=	ocamllex
 
 _DEP=		$(foreach e,$(_SRC),$(dir $e)$(patsubst %.ml,.%.d,$(notdir $e)))
 _FND=		find
-_PAT=		'.*ml[ily]*.*'
+_PAT=		'.*ml[ily]*'
 _SRC=		$(shell $(_FND) $(_FNDFLAGS))
 _ORD=		$(CSRC) $(shell $(OCAMLDEP) $(_INC) -sort $(_SRC))
 _INC=		$(foreach e,$(sort $(foreach e,$(_SRC),$(dir $e))),-I '$e')
