@@ -14,15 +14,20 @@
 # TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 # PERFORMANCE OF THIS SOFTWARE.
 
-%.o: %.c
+%.o:		%.c
 	$(OCAMLC) -c -ccopt "$(CFLAGS) -o $@" $<
-%.cmi: %.mli
+
+%.cmi:		%.mli
 	$(OCAMLC) $(OCAMLFLAGS) $<
-%.cmo: %.ml
+
+%.cmo:		%.ml
 	$(OCAMLC) $(OCAMLFLAGS) -c $<
-%.cmx: %.ml
+
+%.cmx:		%.ml
 	$(OCAMLC) $(OCAMLFLAGS) -c $<
-%.ml: %.mll
+
+%.ml:		%.mll
 	$(OCAMLLEX) $(OCAMLLEXFLAGS) $<
-%.ml: %.mly
+
+%.ml:		%.mly
 	$(MENHIR) $(MENHIRFLAGS) $<

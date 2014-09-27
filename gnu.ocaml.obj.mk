@@ -23,7 +23,7 @@ _MAXDEPTH=	-maxdepth 1
 endif
 
 ifdef EXCL
-_EXL=		$(foreach e, $(EXCL), -not -regex '.*$e.*')
+_EXL=		$(foreach e,$(EXCL),-not -regex '.*$e.*')
 endif
 
 MENHIR?=	menhir
@@ -37,7 +37,7 @@ _FND=		find
 _PAT=		'.*ml[ily]*.*'
 _SRC=		$(shell $(_FND) $(_FNDFLAGS))
 _ORD=		$(CSRC) $(shell $(OCAMLDEP) $(_INC) -sort $(_SRC))
-_INC=		$(foreach e, $(sort $(foreach e, $(_SRC), $(dir $e))), -I '$e')
+_INC=		$(foreach e,$(sort $(foreach e,$(_SRC),$(dir $e))),-I '$e')
 
 ifdef CSRC
 ifndef OCAMLNATIVE
@@ -63,20 +63,20 @@ ifndef NOSUBDIR
 OCAMLFLAGS+=	$(_INC)
 endif
 
-_OBJ=		$(patsubst %.c, %.o, $(filter %.c, $(_ORD)))
+_OBJ=		$(patsubst %.c,%.o,$(filter %.c,$(_ORD)))
 
 ifdef OCAMLNATIVE
-_OBJ+=		$(patsubst %.ml, %.cmx, $(filter %.ml, $(_ORD)))
-_CLN+=		$(patsubst %.cmx, %.o, $(filter %.cmx, $(_OBJ)))
-_CLN+=		$(patsubst %.cmx, %.cmi, $(filter %.cmx, $(_OBJ)))
+_OBJ+=		$(patsubst %.ml,%.cmx,$(filter %.ml,$(_ORD)))
+_CLN+=		$(patsubst %.cmx,%.o,$(filter %.cmx,$(_OBJ)))
+_CLN+=		$(patsubst %.cmx,%.cmi,$(filter %.cmx,$(_OBJ)))
 else
-_OBJ+=		$(patsubst %.ml, %.cmo, $(filter %.ml, $(_ORD)))
-_CLN+=		$(patsubst %.cmo, %.cmi, $(filter %.cmo, $(_OBJ)))
+_OBJ+=		$(patsubst %.ml,%.cmo,$(filter %.ml,$(_ORD)))
+_CLN+=		$(patsubst %.cmo,%.cmi,$(filter %.cmo,$(_OBJ)))
 endif
 
-_INT=		$(patsubst %.mly, %.ml, $(filter %.mly, $(_SRC)))
-_INT+=		$(patsubst %.mll, %.ml, $(filter %.mll, $(_SRC)))
-_CLN+=		$(patsubst %.ml, %.mli, $(_INT))
+_INT=		$(patsubst %.mly,%.ml,$(filter %.mly,$(_SRC)))
+_INT+=		$(patsubst %.mll,%.ml,$(filter %.mll,$(_SRC)))
+_CLN+=		$(patsubst %.ml,%.mli,$(_INT))
 
 -include $(_DEP)
 
